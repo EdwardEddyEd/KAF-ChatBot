@@ -41,15 +41,9 @@ if ( cloudantCredentials ) {
 cloudantUrl = cloudantUrl || process.env.CLOUDANT_URL; // || '<cloudant_url>';
 var logs = null;
 var app = express();
-
-<<<<<<< HEAD
-// Create the inventory
-getInventory();
-=======
 // Create the inventory
 var inventory = {items: null};
 getInventory(inventory);
->>>>>>> a76db6cc94cacef0f885a9f42569479cf3aa78fc
 
 // Bootstrap application settings
 app.use( express.static( './public' ) ); // load UI from public folder
@@ -119,13 +113,13 @@ function updateMessage(res, input, data) {
     }
 
     // Check that every item in the order is in stock
-    for(var i = 0; i < data.entities.length; i++){
-      if(!(data.entities[i].entity === 'number')){
+    for (var i = 0; i < data.entities.length; i++) {
+      if (!(data.entities[i].entity === 'number')) {
         var entity = data.entities[i].entity;
         var item   = data.entities[i].value;
 
         // If an item isn't in inventory, can't place order
-        if(!checkInventory(entity, item, quantity)){
+        if (!checkInventory(entity, item, quantity)) {
           orderExists = 0;
           params.push('Unfortunately, we\'re all out of that item today.');
           break;
@@ -169,8 +163,8 @@ function isProvideID(data) {
 }
 
 // Creates and returns the starting inventory
-function getInventory(inv){
-    httpGet("https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key=\"1\"&include_docs=true", inv);
+function getInventory(inv) {
+  httpGet('https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key="1"&include_docs=true', inv);
 }
 
 // GET HTTP Request function
@@ -182,23 +176,23 @@ function httpGet(theUrl, inv)
     password: process.env.NO_SQL_PASSWORD
   };
 
-    restler.get(theUrl, options).on('complete', function (data) {
-        inv.items = data.rows[0].doc.items;
-        if(inv.items != null){
-            console.log("Inventory Obtained!");
-            console.log(inv);
-        }
-        else{
-            console.log("Inventory Failed.");
-        }
-    });
+  restler.get(theUrl, options).on('complete', function (data) {
+    inv.items = data.rows[0].doc.items;
+    if (inv.items != null) {
+      console.log('Inventory Obtained!');
+      console.log(inv);
+    }
+    else {
+      console.log('Inventory Failed.');
+    }
+  });
 }
 
 // Checks the inventory for an item (entity)
 // Returns true if item is available
 
-function checkInventory(entity, item, quantity){
-  if(inventory.items[entity][item] >= quantity){
+function checkInventory(entity, item, quantity) {
+  if (inventory.items[entity][item] >= quantity) {
     inventory.items[entity][item] -= quantity;
     return true;
   }
