@@ -43,7 +43,8 @@ var logs = null;
 var app = express();
 
 // Create the inventory  
-getInventory();
+var inventory = {items: null};
+getInventory(inventory);
 
 // Bootstrap application settings
 app.use( express.static( './public' ) ); // load UI from public folder
@@ -116,11 +117,11 @@ function updateMessage(res, input, data) {
     // Check that every item in the order is in stock
     for(var i = 0; i < data.entities.length; i++){
       if(!(data.entities[i].entity === 'number')){
-        var item = data.entities[i].value;
+        var entity = data.entities[i].entity;
+        var item   = data.entities[i].value;
       
         // If an item isn't in inventory, can't place order
-        if(!checkInventory(item, quantity)){
-          console.log(item);
+        if(!checkInventory(entity, item, quantity)){
           orderExists = 0;
           params.push('Unfortunately, we\'re all out of that item today.');
           break;
@@ -164,12 +165,12 @@ function isProvideID(data){
 }
 
 // Creates and returns the starting inventory
-function getInventory(){
-    httpGet("https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key=\"1\"&include_docs=true");
+function getInventory(inv){
+    httpGet("https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key=\"1\"&include_docs=true", inv);
 }
 
 // GET HTTP Request function
-function httpGet(theUrl)
+function httpGet(theUrl, inv)
 {
     var restler = require('restler');
     var options = {
@@ -178,15 +179,22 @@ function httpGet(theUrl)
     }
 
     restler.get(theUrl, options).on('complete', function (data) {
-        console.log(data.rows[0]);
+        inv.items = data.rows[0].doc.items;
+        if(inv.items != null){
+            console.log("Inventory Obtained!");
+            console.log(inv);
+        }
+        else{
+            console.log("Inventory Failed.");
+        }
     });
 }
 
 // Checks the inventory for an item (entity)
 // Returns true if item is available
-function checkInventory(item, quantity){
-  if(inventory[item] >= quantity){
-    inventory[item]-=quantity;
+function checkInventory(entity, item, quantity){
+  if(inventory.items[entity][item] >= quantity){
+    inventory.items[entity][item] -= quantity;
     return true;
   }
   return false; 
