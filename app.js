@@ -169,13 +169,8 @@ function isProvideID(data) {
 }
 
 // Creates and returns the starting inventory
-<<<<<<< HEAD
-function getInventory() {
-  httpGet('https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key="1"&include_docs=true');
-=======
 function getInventory(inv){
     httpGet("https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key=\"1\"&include_docs=true", inv);
->>>>>>> a76db6cc94cacef0f885a9f42569479cf3aa78fc
 }
 
 // GET HTTP Request function
@@ -187,11 +182,6 @@ function httpGet(theUrl, inv)
     password: process.env.NO_SQL_PASSWORD
   };
 
-<<<<<<< HEAD
-  restler.get(theUrl, options).on('complete', function (data) {
-    console.log(data.rows[0]);
-  });
-=======
     restler.get(theUrl, options).on('complete', function (data) {
         inv.items = data.rows[0].doc.items;
         if(inv.items != null){
@@ -202,20 +192,14 @@ function httpGet(theUrl, inv)
             console.log("Inventory Failed.");
         }
     });
->>>>>>> a76db6cc94cacef0f885a9f42569479cf3aa78fc
 }
 
 // Checks the inventory for an item (entity)
 // Returns true if item is available
-<<<<<<< HEAD
-function checkInventory(item, quantity) {
-  if (inventory[item] >= quantity) {
-    inventory[item] -= quantity;
-=======
+
 function checkInventory(entity, item, quantity){
   if(inventory.items[entity][item] >= quantity){
     inventory.items[entity][item] -= quantity;
->>>>>>> a76db6cc94cacef0f885a9f42569479cf3aa78fc
     return true;
   }
   return false;
