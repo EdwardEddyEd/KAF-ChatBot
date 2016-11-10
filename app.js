@@ -41,6 +41,7 @@ if ( cloudantCredentials ) {
 cloudantUrl = cloudantUrl || process.env.CLOUDANT_URL; // || '<cloudant_url>';
 var logs = null;
 var app = express();
+
 // Create the inventory
 var inventory = {items: null};
 getInventory(inventory);
