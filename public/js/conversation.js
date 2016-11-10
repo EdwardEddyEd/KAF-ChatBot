@@ -3,7 +3,7 @@
 /* eslint no-unused-vars: "off" */
 /* global Api: true, Common: true*/
 
-var ConversationPanel = (function() {
+var ConversationPanel = (function () {
   var settings = {
     selectors: {
       chatBox: '#scrollingChat',
@@ -20,7 +20,8 @@ var ConversationPanel = (function() {
   // Publicly accessible methods defined
   return {
     init: init,
-    inputKeyDown: inputKeyDown
+    inputKeyDown: inputKeyDown,
+    click: click
   };
 
   // Initialize the module
@@ -33,13 +34,13 @@ var ConversationPanel = (function() {
   // This causes the displayMessage function to be called when messages are sent / received
   function chatUpdateSetup() {
     var currentRequestPayloadSetter = Api.setRequestPayload;
-    Api.setRequestPayload = function(newPayloadStr) {
+    Api.setRequestPayload = function (newPayloadStr) {
       currentRequestPayloadSetter.call(Api, newPayloadStr);
       displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.user);
     };
 
     var currentResponsePayloadSetter = Api.setResponsePayload;
-    Api.setResponsePayload = function(newPayloadStr) {
+    Api.setResponsePayload = function (newPayloadStr) {
       currentResponsePayloadSetter.call(Api, newPayloadStr);
       displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.watson);
     };
@@ -83,7 +84,7 @@ var ConversationPanel = (function() {
         input.classList.add('underline');
         var txtNode = document.createTextNode(input.value);
         ['font-size', 'font-style', 'font-weight', 'font-family', 'line-height',
-          'text-transform', 'letter-spacing'].forEach(function(index) {
+          'text-transform', 'letter-spacing'].forEach(function (index) {
             dummy.style[index] = window.getComputedStyle(input, null).getPropertyValue(index);
           });
         dummy.textContent = txtNode.textContent;
@@ -126,12 +127,12 @@ var ConversationPanel = (function() {
               + settings.selectors.latest);
       // Previous "latest" message is no longer the most recent
       if (previousLatest) {
-        Common.listForEach(previousLatest, function(element) {
+        Common.listForEach(previousLatest, function (element) {
           element.classList.remove('latest');
         });
       }
 
-      messageDivs.forEach(function(currentDiv) {
+      messageDivs.forEach(function (currentDiv) {
         chatBoxElement.appendChild(currentDiv);
         // Class to start fade in animation
         currentDiv.classList.add('load');
@@ -161,7 +162,7 @@ var ConversationPanel = (function() {
     }
     var messageArray = [];
 
-    textArray.forEach(function(currentText) {
+    textArray.forEach(function (currentText) {
       if (currentText) {
         var messageJson = {
           // <div class='segments'>
@@ -212,6 +213,27 @@ var ConversationPanel = (function() {
     if (event.keyCode === 13 && inputBox.value) {
       // Retrieve the context from the previous server response
       var context;
+      var latestResponse = Api.getResponsePayload();
+      if (latestResponse) {
+        context = latestResponse.context;
+      }
+
+      // Send the user message
+      Api.sendRequest(inputBox.value, context);
+
+      // Clear input box for further messages
+      inputBox.value = '';
+      Common.fireEvent(inputBox, 'input');
+    }
+  }
+
+  function click(event, inputBox) {
+    console.log(inputBox);
+    // Submit on enter key, dis-allowing blank messages
+    if (inputBox.value) {
+      // Retrieve the context from the previous server response
+      var context;
+      console.log('get');
       var latestResponse = Api.getResponsePayload();
       if (latestResponse) {
         context = latestResponse.context;

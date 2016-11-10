@@ -42,7 +42,7 @@ cloudantUrl = cloudantUrl || process.env.CLOUDANT_URL; // || '<cloudant_url>';
 var logs = null;
 var app = express();
 
-// Create the inventory  
+// Create the inventory
 getInventory();
 
 // Bootstrap application settings
@@ -59,7 +59,7 @@ var conversation = watson.conversation( {
 } );
 
 // Endpoint to be call from the client side
-app.post( '/api/message', function(req, res) {
+app.post( '/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
   if ( !workspace || workspace === '<workspace-id>' ) {
     return res.json( {
@@ -84,7 +84,7 @@ app.post( '/api/message', function(req, res) {
     }
   }
   // Send the input to the conversation service
-  conversation.message( payload, function(err, data) {
+  conversation.message( payload, function (err, data) {
     if ( err ) {
       return res.status( err.code || 500 ).json( err );
     }
@@ -101,25 +101,24 @@ app.post( '/api/message', function(req, res) {
 function updateMessage(res, input, data) {
   // Intent is order
   // return appropriate response given availability of item
-  if(isOrder(data)){
-
+  if (isOrder(data)) {
     var params = [];
     var orderExists = 1;
     var quantity = 1;
- 
+
     // Get quantity
-    for(var i = 0; i < data.entities.length; i++){
-      if(data.entities[i].entity === 'number')
+    for (var i = 0; i < data.entities.length; i++) {
+      if (data.entities[i].entity === 'number')
         quantity = data.entities[i].value;
     }
 
     // Check that every item in the order is in stock
-    for(var i = 0; i < data.entities.length; i++){
-      if(!(data.entities[i].entity === 'number')){
+    for (var i = 0; i < data.entities.length; i++) {
+      if (!(data.entities[i].entity === 'number')) {
         var item = data.entities[i].value;
-      
+
         // If an item isn't in inventory, can't place order
-        if(!checkInventory(item, quantity)){
+        if (!checkInventory(item, quantity)) {
           console.log(item);
           orderExists = 0;
           params.push('Unfortunately, we\'re all out of that item today.');
@@ -127,74 +126,74 @@ function updateMessage(res, input, data) {
         }
       }
     }
-    if(orderExists == 1){
+    if (orderExists == 1) {
       params.push('Great! We\'ve added your order to the cart.');
     }
-    data.output.text = replaceParams ( data.output.text, params );
+    data.output.text = replaceParams( data.output.text, params );
     return res.json(data);
   }
   // Intent is provide_id
   // get current estimated time
-  else if(isProvideID(data)){
+  else if (isProvideID(data)) {
     var params = [];
     var wait_time = 10;
     params.push(wait_time);
-    data.output.text = replaceParams ( data.output.text, params );
+    data.output.text = replaceParams( data.output.text, params );
     return res.json(data);
   }
-  else{
+  else {
     return res.json(data);
   }
 }
 
 // Returns true if the intent is order
-function isOrder(data){
+function isOrder(data) {
   return data.intents && data.intents.length > 0 && data.intents[0].intent === 'order'
     && data.entities && data.entities.length > 0;
 }
 
 // Returns true if this is the customer's first order
-function isFirstOrder(data){
+function isFirstOrder(data) {
   return data.context.numOrders == 1;
 }
 
 // Returns true if the intent is provide_id
-function isProvideID(data){
-  return data.intents && data.intents.length > 0 && data.intents[0].intent === 'provide_id'
+function isProvideID(data) {
+  return data.intents && data.intents.length > 0 && data.intents[0].intent === 'provide_id';
 }
 
 // Creates and returns the starting inventory
-function getInventory(){
-    httpGet("https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key=\"1\"&include_docs=true");
+function getInventory() {
+  httpGet('https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key="1"&include_docs=true');
 }
 
 // GET HTTP Request function
 function httpGet(theUrl)
 {
-    var restler = require('restler');
-    var options = {
-        username: process.env.NO_SQL_USERNAME,
-        password: process.env.NO_SQL_PASSWORD
-    }
+  var restler = require('restler');
+  var options = {
+    username: process.env.NO_SQL_USERNAME,
+    password: process.env.NO_SQL_PASSWORD
+  };
 
-    restler.get(theUrl, options).on('complete', function (data) {
-        console.log(data.rows[0]);
-    });
+  restler.get(theUrl, options).on('complete', function (data) {
+    console.log(data.rows[0]);
+  });
 }
 
 // Checks the inventory for an item (entity)
 // Returns true if item is available
-function checkInventory(item, quantity){
-  if(inventory[item] >= quantity){
-    inventory[item]-=quantity;
+function checkInventory(item, quantity) {
+  if (inventory[item] >= quantity) {
+    inventory[item] -= quantity;
     return true;
   }
-  return false; 
+  return false;
 }
 
-function replaceParams(original, args){
-  if(original && args){
-    var text = original.join(' ').replace(/{(\d+)}/g, function(match, number) {
+function replaceParams(original, args) {
+  if (original && args) {
+    var text = original.join(' ').replace(/{(\d+)}/g, function (match, number) {
       return typeof args[number] != 'undefined'
         ? args[number]
         : match
@@ -217,10 +216,10 @@ if ( cloudantUrl ) {
   // If the cloudantUrl has been configured then we will want to set up a nano client
   var nano = require( 'nano' )( cloudantUrl );
   // add a new API which allows us to retrieve the logs (note this is not secure)
-  nano.db.get( 'kaf_logs', function(err) {
+  nano.db.get( 'kaf_logs', function (err) {
     if ( err ) {
       console.error(err);
-      nano.db.create( 'kaf_logs', function(errCreate) {
+      nano.db.create( 'kaf_logs', function (errCreate) {
         console.error(errCreate);
         logs = nano.db.use( 'kaf_logs' );
       } );
@@ -230,9 +229,9 @@ if ( cloudantUrl ) {
   } );
 
   // Endpoint which allows deletion of db
-  app.post( '/clearDb', auth, function(req, res) {
-    nano.db.destroy( 'kaf_logs', function() {
-      nano.db.create( 'kaf_logs', function() {
+  app.post( '/clearDb', auth, function (req, res) {
+    nano.db.destroy( 'kaf_logs', function () {
+      nano.db.create( 'kaf_logs', function () {
         logs = nano.db.use( 'kaf_logs' );
       } );
     } );
@@ -240,13 +239,13 @@ if ( cloudantUrl ) {
   } );
 
   // Endpoint which allows conversation logs to be fetched
-  app.get( '/chats', auth, function(req, res) {
-    logs.list( {include_docs: true, 'descending': true}, function(err, body) {
+  app.get( '/chats', auth, function (req, res) {
+    logs.list( {include_docs: true, 'descending': true}, function (err, body) {
       console.error(err);
       // download as CSV
       var csv = [];
       csv.push( ['Question', 'Intent', 'Confidence', 'Entity', 'Output', 'Time'] );
-      body.rows.sort( function(a, b) {
+      body.rows.sort( function (a, b) {
         if ( a && b && a.doc && b.doc ) {
           var date1 = new Date( a.doc.time );
           var date2 = new Date( b.doc.time );
@@ -260,7 +259,7 @@ if ( cloudantUrl ) {
           return  equal ? 0 : -1;
         }
       } );
-      body.rows.forEach( function(row) {
+      body.rows.forEach( function (row) {
         var question = '';
         var intent = '';
         var confidence = 0;
