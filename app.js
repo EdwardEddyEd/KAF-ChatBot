@@ -42,14 +42,9 @@ cloudantUrl = cloudantUrl || process.env.CLOUDANT_URL; // || '<cloudant_url>';
 var logs = null;
 var app = express();
 
-<<<<<<< HEAD
-// Create the inventory
-getInventory();
-=======
 // Create the inventory
 var inventory = {items: null};
 getInventory(inventory);
->>>>>>> a76db6cc94cacef0f885a9f42569479cf3aa78fc
 
 // Bootstrap application settings
 app.use( express.static( './public' ) ); // load UI from public folder
