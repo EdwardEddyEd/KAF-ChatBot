@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Redressed');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 * {
   -webkit-box-sizing: border-box;
@@ -8,11 +8,11 @@
 
 .cover {
   background-image: url(coffee.jpg);
-  background-size: cover;
+  background-size: 100% 100%;
 }
 
 body {
-  font-family: 'Redressed', cursive;   /*Zapf Chancery, cursive*/
+  font-family: 'Roboto', sans-serif;   /*Zapf Chancery, cursive*/
   margin: 0;
   padding: 0;
 }
@@ -229,9 +229,17 @@ div {
   position: relative;
   border-radius: 1.5625rem;
   font-size: 1.3rem;
-  color: #B5B5B5;
+  color: #FFF;
   letter-spacing: 0.075rem;
   line-height: 1.5125rem;
+
+  background: lightblue;
+  border-radius: 1.25rem;
+  border-bottom-left-radius: 0;
+  text-align: left;
+  display: inline-block;
+  margin-left: 2.5rem;
+  min-width: 2.5rem;
 }
 
 .from-watson.latest .message-inner {
@@ -270,29 +278,36 @@ div {
   max-width: 100%;
   padding-left: 0.125rem;
   margin-bottom: -0.125rem;
-  font-family: 'Redressed', cursive;
+  font-family: 'Roboto', sans-serif;
 }
 
 #textInput.underline {
   border-bottom: 0.125rem solid #00B4A0;
 }
 
+.inputOutline {
+  display: block;
+  border-bottom: 0.0625rem solid #aeaeae;
+  margin-left: 0.5rem;
+  margin-right: 150px;
+  width: 65%;
+}
+
 #submitID {
   float:right;
-  margin-top: 0.5rem;
-  margin-right: 0.5rem;
+  margin-top: -2rem;
+  margin-right: 2.5rem;
   margin-bottom: 1rem;
   border-radius: 0.5rem;
-  height: 1.625rem;
-  width: 3.5rem;
+  height: 2.2rem;
+  width: 4.0rem;
   border: 1px solid teal;
   text-align: center;
   text-decoration: none;
   background-color: lightblue;
-  font-size: 1rem;
   cursor: pointer;
-  font-family: 'Redressed', cursive;
-  font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.2rem;
 }
 
 input[type="button"]:hover {
@@ -324,12 +339,7 @@ input:-moz-placeholder {
   display: none;
 }
 
-.inputOutline {
-  display: block;
-  border-bottom: 0.0625rem solid #aeaeae;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-}
+
 
 #textInputDummy {
   position:absolute;
