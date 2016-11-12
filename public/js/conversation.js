@@ -41,8 +41,13 @@ var ConversationPanel = (function () {
 
     var currentResponsePayloadSetter = Api.setResponsePayload;
     Api.setResponsePayload = function (newPayloadStr) {
-      currentResponsePayloadSetter.call(Api, newPayloadStr);
-      displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.watson);
+      var newPayload;
+      if(typeof(newPayloadStr) == 'object')
+        newPayload = JSON.stringify(newPayloadStr);
+      else
+        newPayload = newPayloadStr;
+      currentResponsePayloadSetter.call(Api, newPayload);
+      displayMessage(JSON.parse(newPayload), settings.authorTypes.watson);
     };
   }
 
@@ -228,13 +233,14 @@ var ConversationPanel = (function () {
   }
 
   function click(event, inputBox) {
-    console.log(inputBox);
+    //console.log(inputBox);
     // Submit on enter key, dis-allowing blank messages
     if (inputBox.value) {
       // Retrieve the context from the previous server response
       var context;
-      console.log('get');
+      //console.log('get');
       var latestResponse = Api.getResponsePayload();
+      console.log(latestResponse);
       if (latestResponse) {
         context = latestResponse.context;
       }

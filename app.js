@@ -23,6 +23,8 @@ var express = require( 'express' );  // app server
 var bodyParser = require( 'body-parser' );  // parser for post requests
 var watson = require( 'watson-developer-cloud' );  // watson sdk
 var http = require('http');
+var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+var fs = require('fs');
 
 // The following requires are needed for logging purposes
 var uuid = require( 'uuid' );
@@ -58,6 +60,20 @@ var conversation = watson.conversation( {
   version_date: '2016-07-11',
   version: 'v1'
 } );
+
+// var text_to_speech = new TextToSpeechV1({
+//   username: '<username>',
+//   password: '<password>'
+// });
+
+// var params = {
+//   text: 'Hello from IBM Watson',
+//   voice: 'en-US_AllisonVoice', // Optional voice
+//   accept: 'audio/wav'
+// };
+
+// // Pipe the synthesized text to a file
+// text_to_speech.synthesize(params).pipe(fs.createWriteStream('output.wav'));
 
 // Endpoint to be call from the client side
 app.post( '/api/message', function (req, res) {
@@ -193,6 +209,8 @@ function httpGet(theUrl, inv)
 // Returns true if item is available
 
 function checkInventory(entity, item, quantity) {
+
+  console.log(quantity);
   if (inventory.items[entity][item] >= quantity) {
     inventory.items[entity][item] -= quantity;
     return true;
@@ -303,5 +321,8 @@ if ( cloudantUrl ) {
     } );
   } );
 }
+
+app.use ( '/api/speech-to-text/', require ( './speech/stt-token.js' ) );
+app.use ( '/api/text-to-speech/', require ( './speech/tts-token.js' ) );
 
 module.exports = app;

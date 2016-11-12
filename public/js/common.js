@@ -3,11 +3,23 @@
 /* eslint no-unused-vars: "off" */
 
 var Common = (function() {
+  var classes = {
+    hide: 'hide',
+    fade: 'fade',
+    fadeOut: 'fade-out'
+  };
+
   // Publicly accessible methods defined
   return {
     buildDomElement: buildDomElementFromJson,
     fireEvent: fireEvent,
-    listForEach: listForEach
+    listForEach: listForEach,
+    hide: hide,
+    show: show,
+    toggle: toggle,
+    addClass: addClass,
+    removeClass: removeClass,
+    toggleClass: toggleClass
   };
 
   // Take in JSON object and build a DOM element out of it
@@ -75,6 +87,51 @@ var Common = (function() {
   function listForEach(list, callback) {
     for (var i = 0; i < list.length; i++) {
       callback.call(null, list[i]);
+    }
+  }
+
+  // Adds the 'hide' class to a given element, giving it a CSS display value of 'none'
+  function hide(element) {
+    addClass(element, classes.hide);
+  }
+
+  // Removes the 'hide' class from a given element, removing its CSS display value of 'none'
+  function show(element) {
+    removeClass(element, classes.hide);
+  }
+
+  // Toggles the 'hide' class on a given element, toggling a CSS display value of 'none'
+  function toggle(element) {
+    toggleClass(element, classes.hide);
+  }
+
+  // Auxiliary function for adding a class to an element
+  // (to help mitigate IE's lack of support for svg.classList)
+  function addClass(element, clazz) {
+    if (element.classList) {
+      element.classList.add(clazz);
+    } else {
+      ieSvgAddClass(element, clazz);
+    }
+  }
+
+  // Auxiliary function for removing a class from an element
+  // (to help mitigate IE's lack of support for svg.classList)
+  function removeClass(element, clazz) {
+    if (element.classList) {
+      element.classList.remove(clazz);
+    } else {
+      ieSvgRemoveClass(element, clazz);
+    }
+  }
+
+  // Auxiliary function for toggling a class on an element
+  // (to help mitigate IE's lack of support for svg.classList)
+  function toggleClass(element, clazz) {
+    if (element.classList) {
+      element.classList.toggle(clazz);
+    } else {
+      ieSvgToggleClass(element, clazz);
     }
   }
 }());

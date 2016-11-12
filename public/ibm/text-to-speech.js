@@ -35,10 +35,13 @@ var TTSModule = (function() {
 
   // Create a callback when a new Watson response is received to start speech
   function textToSpeech() {
-    var currentResponsePayloadSetter = Api.setWatsonPayload;
-    Api.setWatsonPayload = function(payload) {
+    var currentResponsePayloadSetter = Api.setResponsePayload;
+    Api.setResponsePayload = function(payload) {
       currentResponsePayloadSetter.call(Api, payload);
-      playCurrentAudio(payload.output); // Plays audio using output text
+      var payloadJson = Api.getResponsePayload();
+      if (button.value === 'ON') {
+        playCurrentAudio(payloadJson.output); // Plays audio using output text
+      }
     };
   }
 
