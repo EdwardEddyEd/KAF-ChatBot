@@ -8,7 +8,7 @@
       <meta property="og:title" content="Conversation Chat Simple" />
       <meta property="og:description" content="Sample application that shows how to use the Conversation API to identify user intents" />
       <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-      <link rel="stylesheet" href="css/app1.css">
+      <link rel="stylesheet" href="css/app.css">
       <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <div class="cover">
@@ -17,7 +17,7 @@
       <div id="contentParent" class="responsive-columns-wrapper">
       <div id="output-audio" class="audio-on" onclick="TTSModule.toggle()" value="ON"></div>
       <div id="input-mic" class="inactive-mic" onclick="STTModule.micON()"></div>
-      <div id="chat-column-holder" class="responsive-column content-column">
+      <div id="chat-column-holder" class="responsive-column content-column" style="overflow: hidden;">
           <div class="chat-column">
               <div id="scrollingChat"></div>
                   <label for="textInput" class="inputOutline">

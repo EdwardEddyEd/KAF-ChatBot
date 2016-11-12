@@ -27,6 +27,10 @@ var Api = (function() {
 
   // Send a message request to the server
   function sendRequest(text, context) {
+    // console.log("API SEND REQUEST INFO:");
+    // console.log("TEXT: " + text);
+    // console.log("CONTEXT: :" + context);
+
     // Build request payload
     var payloadToWatson = {};
     if (text) {
