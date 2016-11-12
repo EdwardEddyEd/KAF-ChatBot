@@ -8,7 +8,7 @@
       <meta property="og:title" content="Conversation Chat Simple" />
       <meta property="og:description" content="Sample application that shows how to use the Conversation API to identify user intents" />
       <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-      <link rel="stylesheet" href="css/app1.css">
+      <link rel="stylesheet" href="css/app.css">
       <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 </head>
 <div class="cover">
@@ -20,6 +20,7 @@
       <div id="chat-column-holder" class="responsive-column content-column">
           <div class="chat-column">
               <div id="scrollingChat"></div>
+
                   <label for="textInput" class="inputOutline">
                     <div style="overflow: hidden; padding-right: .5em;">
                       <input name="textInput" id="textInput" class="input responsive-column"
@@ -28,10 +29,10 @@
                              onkeydown="ConversationPanel.inputKeyDown(event, this)">
                     </div>
                   </label>
+                  <img id="kaf-logo" src="/img/kaf_logo.png"/>
                   <input id="submitID" onclick="ConversationPanel.click(event, document.getElementById('textInput'))" type="button" value="Send"/>
               </div>
           </div>
-
           <div id="payload-column" class="fixed-column content-column" style="display: none;">
                   <div id="payload-initial-message">
                   </div>

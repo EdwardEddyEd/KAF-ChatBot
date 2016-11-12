@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -6,12 +7,12 @@
 }
 
 .cover {
-  background-image: url(coffee.jpg);
+  background-image: url(../img/coffee.jpg);
   background-size: 100% 100%;
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto', sans-serif;   /*Zapf Chancery, cursive*/
   margin: 0;
   padding: 0;
 }
@@ -53,6 +54,66 @@ div {
   height: 100%;
 }
 
+#input-wrapper {
+    padding: 1.25rem;
+    background: white;
+    position: relative;
+}
+
+#input-mic-holder {
+    height: 3rem;
+    width: 3rem;
+    position: relative;
+}
+
+#input-mic {
+    display: inline-block;
+    position: relative;
+    top: 6rem;
+    left: 2rem;
+    height: 3.5rem;
+    width: 3.5rem;
+    border-radius: 1.5rem;
+    transition: 0.4s;
+    cursor: pointer;
+    background-color: #BCC8C8;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 55%;
+}
+
+#input-mic.inactive-mic {
+  background-image: url("../img/mic-off.svg");
+}
+
+#input-mic.active-mic, #input-mic:active {
+  background-image: url("../img/mic-on.svg");
+  background-color: #32D0B6;
+  border: 0.25rem solid #01745E;
+}
+
+#output-audio.audio-on {
+  background-image: url("../img/audio-on.svg");
+}
+
+#output-audio.audio-off {
+  background-image: url("../img/audio-off.svg");
+}
+
+#output-audio {
+    position: absolute;
+    z-index: 10;
+    left: 2rem;
+    top: 1rem;
+    height: 3.5rem;
+    width: 3.5rem;
+    border-radius: 1.75rem;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100%;
+}
+
 .responsive-columns-wrapper {
   display: -ms-flexbox;
   display: -webkit-flex;
@@ -75,8 +136,9 @@ div {
 
 .chat-column {
   height: 100%;
-  padding: 0.9375rem 0 0.625rem 0;
-  margin-left: 100px;
+  padding: 0rem 0 1.5rem 0;
+  margin-top: 1rem;
+  margin-left: 2rem;
   text-align: left;
   max-width: 25rem;
   min-width: 9.375rem;
@@ -111,7 +173,7 @@ div {
 
 .load .message-inner {
   opacity: 1;
-  margin-top: 0.3125rem;
+  margin-top: 10px;
 }
 
 .from-user {
@@ -120,11 +182,11 @@ div {
 
 .from-user .message-inner {
   position: relative;
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: #fff;
-  letter-spacing: 0.015rem;
-  line-height: 1.3125rem;
-  background: #00B4A0;
+  letter-spacing: 0.075rem;
+  line-height: 1.5125rem;
+  background:   #BC7542;
   border-radius: 1.25rem;
   border-bottom-right-radius: 0;
   text-align: left;
@@ -150,7 +212,7 @@ div {
   right: 0;
   height: 0.375rem;
   width: 0.5rem;
-  background: #1cb3a0;
+  background: #BC7542;
 }
 
 .from-user .message-inner:after {
@@ -166,10 +228,18 @@ div {
 .from-watson .message-inner {
   position: relative;
   border-radius: 1.5625rem;
-  font-size: 1rem;
-  color: #B5B5B5;
-  letter-spacing: 0.015rem;
-  line-height: 1.3125rem;
+  font-size: 1.3rem;
+  color: #FFF;
+  letter-spacing: 0.075rem;
+  line-height: 1.5125rem;
+
+  background: lightblue;
+  border-radius: 1.25rem;
+  border-bottom-left-radius: 0;
+  text-align: left;
+  display: inline-block;
+  margin-left: 2.5rem;
+  min-width: 2.5rem;
 }
 
 .from-watson.latest .message-inner {
@@ -178,19 +248,20 @@ div {
 
 .from-watson p {
   margin: 0.3125rem;
-  padding: 0 1.25rem;
+  padding: 0 1.7rem;
 }
 
 .from-watson.latest.top p:before {
-  content: ".";
+  content: "";
   color: #9855D4;
-  background-image: url("../img/marker_image.png");
-  background-size: 0.3125rem 1.3125rem;
+  background-image: url("../img/coffee_bean-512.png");
+  background-size: 1rem 1rem;
   position: absolute;
+  margin-top: 0.17rem;
   z-index: 2;
   left: 0.4375rem;
-  width: 0.3125rem;
-  height: 1.3125rem;
+  width: 1rem;
+  height: 1rem;
   line-height: 1.3125rem;
 }
 
@@ -206,7 +277,7 @@ div {
   height: 2.5rem;
   max-width: 100%;
   padding-left: 0.125rem;
-  margin-bottom: -0.4rem;
+  margin-bottom: -0.125rem;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -224,20 +295,33 @@ div {
 
 #submitID {
   float:right;
-  position: fixed;
-  margin-top: 0.625rem;
-  margin-left: 24.38px;
-  border-radius: 0.425px;
-  height: 38px;
-  width: 75px;
+  margin-top: -2rem;
+  margin-right: 2.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  height: 2.2rem;
+  width: 4.0rem;
   border: 1px solid teal;
   text-align: center;
   text-decoration: none;
   background-color: lightblue;
-  font-size: 12px;
   cursor: pointer;
   font-family: 'Roboto', sans-serif;
-  font-size: 20px;
+  font-size: 1.2rem;
+}
+
+#kaf-logo {
+  position:absolute;
+  float: left;
+  z-index: 10;
+  margin-top: -3.5rem;
+  margin-left: -3.5rem;
+  height: 3.5rem;
+  width: 3.5rem;
+  border-radius: 1.75rem;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: 100%;
 }
 
 input[type="button"]:hover {
@@ -346,7 +430,7 @@ html{
 
 @media only screen and (max-width: 1000px) {
   html {
-    font-size: 15px;
+    font-size: 1rem;
   }
 }
 
@@ -356,7 +440,7 @@ html{
   }
 
   .chat-column {
-    padding-top: 4rem;
+    padding-top: 0rem;
   }
 
   #payload-column {
