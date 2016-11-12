@@ -3,6 +3,12 @@ declared-services:
   conversation-simple-demo-test1:
     label: conversation
     plan: free
+  speech-to-text-service:
+    label: speech_to_text
+    plan: standard
+  text-to-speech-service:
+    label: text_to_speech
+    plan: standard
 applications:
 - name: conversation-simple
   command: npm start
@@ -11,5 +17,7 @@ applications:
   instances: 1
   services:
   - conversation-simple-demo-test1
+  - speech-to-text-service
+  - text-to-speech-service
   env:
     NPM_CONFIG_PRODUCTION: false
