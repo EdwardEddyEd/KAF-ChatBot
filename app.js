@@ -48,6 +48,9 @@ var app = express();
 var inventory = {items: null};
 getInventory(inventory);
 
+// Create the cart 
+var cart = {};
+
 // Bootstrap application settings
 app.use( express.static( './public' ) ); // load UI from public folder
 app.use( bodyParser.json() );
@@ -116,6 +119,7 @@ app.post( '/api/message', function (req, res) {
  * @return {Object}          The response with the updated message
  */
 function updateMessage(res, input, data) {
+  //console.log(data);
   // Intent is order
   // return appropriate response given availability of item
   if (isOrder(data)) {
@@ -144,6 +148,35 @@ function updateMessage(res, input, data) {
       }
     }
     if (orderExists == 1) {
+
+      // Add items to cart (represented as an array)
+      for (var i = 0; i < data.entities.length; i++) {
+        if (!(data.entities[i].entity === 'number')) {
+          var item = data.entities[i].value;
+          if(cart[item] > 0)
+            cart[item] += Number(quantity);
+          else
+            cart[item] = Number(quantity);
+        }
+      }
+
+      // Add items to cart by comparing input text to entities 
+      // Doesn't work that well
+
+      // var string = data.input.text;
+      // var words = string.split(" ");
+
+      // for (var i = 0; i < words.length; i++){
+      //   for (var j = 0; j < data.entities.length; j++) {
+      //     if (!(data.entities[j].entity === 'number')) {
+      //       var item = data.entities[j].value;
+      //       if(words[i] == item){
+      //         order_string += " ";
+      //         order_string += item;
+      //       }
+      //     }
+      //   } 
+      // }
       params.push('Great! We\'ve added your order to the cart.');
     }
     data.output.text = replaceParams( data.output.text, params );
@@ -155,6 +188,26 @@ function updateMessage(res, input, data) {
     var params = [];
     var wait_time = 10;
     params.push(wait_time);
+    data.output.text = replaceParams( data.output.text, params );
+    return res.json(data);
+  }
+  // Intent is review_order
+  // Output the cart as a string
+  else if(isReviewOrder(data)){
+    var order_string = "";
+    var first = true;;
+    for(item in cart){
+      if(!first)
+        order_string += ", ";
+      var string = " " + cart[item] + " " + item;
+      if(Number(cart[item]) > 1)
+        string += "s";
+      order_string += string;
+      first = false;
+    }
+
+    var params = [];
+    params.push(order_string);
     data.output.text = replaceParams( data.output.text, params );
     return res.json(data);
   }
@@ -178,6 +231,12 @@ function isFirstOrder(data) {
 function isProvideID(data) {
   return data.intents && data.intents.length > 0 && data.intents[0].intent === 'provide_id';
 }
+
+// Returns true if the intent is review_order
+function isReviewOrder(data) {
+  return data.intents && data.intents.length > 0 && data.intents[0].intent === 'review_order';
+}
+
 
 // Creates and returns the starting inventory
 function getInventory(inv) {
@@ -210,12 +269,19 @@ function httpGet(theUrl, inv)
 
 function checkInventory(entity, item, quantity) {
 
-  console.log(quantity);
-  if (inventory.items[entity][item] >= quantity) {
-    inventory.items[entity][item] -= quantity;
+  //console.log(quantity);
+  //console.log(inventory.items[entity][item]);
+  if(inventory.items[entity][item] == true){
     return true;
   }
-  return false;
+  else if (inventory.items[entity][item] >= quantity) {
+    inventory.items[entity][item] -= quantity;
+    //console.log(inventory.items[entity][item]);
+    return true;
+  }
+  else{
+    return false;
+  }
 }
 
 function replaceParams(original, args) {
