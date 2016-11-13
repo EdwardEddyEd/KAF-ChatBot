@@ -49,7 +49,7 @@ var inventory = {items: null};
 getInventory(inventory);
 
 // Create the cart 
-var cart = {};
+var cartHashTable = {};
 
 // Bootstrap application settings
 app.use( express.static( './public' ) ); // load UI from public folder
@@ -126,6 +126,9 @@ function updateMessage(res, input, data) {
     var params = [];
     var orderExists = 1;
     var quantity = 1;
+    var isDrink = false;
+    var main_item = 0;
+    var addOns = ['small',0,0]; // Index 0 contains size (default: small), index 1 contains size milk, index 2 contains flavor. 
 
     // Get quantity
     for (var i = 0; i < data.entities.length; i++) {
@@ -137,7 +140,20 @@ function updateMessage(res, input, data) {
     for (var i = 0; i < data.entities.length; i++) {
       if (!(data.entities[i].entity === 'number')) {
         var entity = data.entities[i].entity;
-        var item   = data.entities[i].value;
+        var item = data.entities[i].value;
+
+        if(entity === 'coffee' || entity === 'drink'){
+          isDrink = true;
+          main_item = item;
+        }
+        else if(entity === 'size')
+          addOns[0] = item;
+        else if(entity === 'milk')
+          addOns[1] = item;
+        else if(entity === 'flavor')
+          addOns[2] = item;
+        else
+          main_item = item;
 
         // If an item isn't in inventory, can't place order
         if (!checkInventory(entity, item, quantity)) {
@@ -150,15 +166,17 @@ function updateMessage(res, input, data) {
     if (orderExists == 1) {
 
       // Add items to cart (represented as an array)
-      for (var i = 0; i < data.entities.length; i++) {
-        if (!(data.entities[i].entity === 'number')) {
-          var item = data.entities[i].value;
-          if(cart[item] > 0)
-            cart[item] += Number(quantity);
-          else
-            cart[item] = Number(quantity);
-        }
-      }
+      addToCart(main_item, quantity, addOns, isDrink);
+
+      // for (var i = 0; i < data.entities.length; i++) {
+      //   if (!(data.entities[i].entity === 'number')) {
+      //     var item = data.entities[i].value;
+      //     if(cart[item] > 0)
+      //       cart[item] += Number(quantity);
+      //     else
+      //       cart[item] = Number(quantity);
+      //   }
+      // }
 
       // Add items to cart by comparing input text to entities 
       // Doesn't work that well
@@ -191,20 +209,12 @@ function updateMessage(res, input, data) {
     data.output.text = replaceParams( data.output.text, params );
     return res.json(data);
   }
+
   // Intent is review_order
   // Output the cart as a string
   else if(isReviewOrder(data)){
-    var order_string = "";
-    var first = true;;
-    for(item in cart){
-      if(!first)
-        order_string += ", ";
-      var string = " " + cart[item] + " " + item;
-      if(Number(cart[item]) > 1)
-        string += "s";
-      order_string += string;
-      first = false;
-    }
+
+    var order_string = reviewOrder();
 
     var params = [];
     params.push(order_string);
@@ -241,6 +251,57 @@ function isReviewOrder(data) {
 // Creates and returns the starting inventory
 function getInventory(inv) {
   httpGet('https://4ee9ee41-95ed-4e7d-b0e8-20762562a5e7-bluemix.cloudant.com/kaf-items/_all_docs?key="1"&include_docs=true', inv);
+}
+
+function addToCart(item, quantity, addOns, isDrink){
+  var key = '';
+  if(isDrink)
+    key += item + ":" + addOns[0] + ":" + addOns[1] + ":" + addOns[2];
+  else
+    key += item;
+
+  // If the item as been ordered already, add quantity to existing item.
+  // Else, it doesn't exist so add to cart
+  if(cartHashTable.hasOwnProperty(key))
+    cartHashTable[key] += Number(quantity);
+  else
+    cartHashTable[key] = Number(quantity);
+}
+
+function reviewOrder(){
+  var order_string = "";
+  var first = true;;
+  for(let item in cartHashTable){
+    if(!first)
+      order_string += ", ";
+
+    var string = " " + cartHashTable[item] + " ";
+    var item_list = item.split(":");
+
+    // If not a drink or coffee, just add item to the end of string.
+    if(item_list.length == 1){
+      string += item_list[0];
+      if(Number(cartHashTable[item]) > 1)
+        string += "s";
+    }
+    else{
+      string += item_list[1] + " " + item_list[0];
+      if(Number(cartHashTable[item]) > 1)
+        string += "s";
+
+      // If there were any additional addons, list them.
+      if(item_list[2] != 0 && item_list[3] == 0)
+        string += " with " + item_list[2] + " milk";
+      else if(item_list[2] == 0 && item_list[3] != 0)
+        string += " with " + item_list[3];
+      else if(item_list[2] != 0 && item_list[3] != 0)
+        string += " with " + item_list[2] + " milk and " + item_list[3];
+    }
+    order_string += string;
+    first = false;
+  }
+
+  return order_string;
 }
 
 // GET HTTP Request function
