@@ -1,12 +1,12 @@
 ---
 declared-services:
-  conversation-simple-demo-test1:
+  Conversation-KAF:
     label: conversation
     plan: free
-  speech-to-text-service:
+  KAF-Chat-Mic:
     label: speech_to_text
     plan: standard
-  text-to-speech-service:
+  KAF-Chat-Speak:
     label: text_to_speech
     plan: standard
 applications:
@@ -16,8 +16,8 @@ applications:
   memory: 256M
   instances: 1
   services:
-  - conversation-simple-demo-test1
-  - speech-to-text-service
-  - text-to-speech-service
+  - Conversation-KAF
+  - KAF-Chat-Mic
+  - KAF-Chat-Speak
   env:
     NPM_CONFIG_PRODUCTION: false

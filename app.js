@@ -18,8 +18,8 @@
 
 require( 'dotenv' ).config( {silent: true} );
 
-
 var express = require( 'express' );  // app server
+var restler = require( 'restler' );
 var bodyParser = require( 'body-parser' );  // parser for post requests
 var watson = require( 'watson-developer-cloud' );  // watson sdk
 var http = require('http');
@@ -208,6 +208,7 @@ function updateMessage(res, input, data) {
     var wait_time = 10;
     params.push(wait_time);
     data.output.text = replaceParams( data.output.text, params );
+    cartHashTable = {};
     return res.json(data);
   }
 
