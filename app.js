@@ -165,8 +165,9 @@ function updateMessage(res, input, data) {
     }
     if (orderExists == 1) {
 
-      // Add items to cart (represented as an array)
-      addToCart(main_item, quantity, addOns, isDrink);
+      // Add items to cart (represented as an array) if the main_item is valid.
+      if(main_item != 0)
+        addToCart(main_item, quantity, addOns, isDrink);
 
       // for (var i = 0; i < data.entities.length; i++) {
       //   if (!(data.entities[i].entity === 'number')) {
